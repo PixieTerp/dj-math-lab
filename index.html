@@ -87,6 +87,10 @@
   .grid>.card{margin-bottom:0}
   @media(min-width:980px){.grid{grid-template-columns:1fr 1fr}.explain{font-size:21px}.card h2{font-size:24px}}
   @media(max-width:520px){.top{flex-direction:column-reverse;align-items:flex-start}}
+  .tries{background:#ff9f1c33;color:var(--orange);border-radius:10px;padding:2px 10px;font-size:15px;white-space:nowrap}
+  .choice:disabled{cursor:default}
+  .choice.used:not(.sel){opacity:.45;text-decoration:line-through}
+  .bonusbox{border:3px dashed var(--orange);border-radius:16px;padding:12px 16px}
 </style>
 </head>
 <body>
@@ -173,7 +177,7 @@
       <div class="row"><input id="b2" type="number" inputmode="decimal" placeholder="sec"> <span class="u">seconds</span></div>
     </div>
     <div class="q">
-      <p><b>B3.</b> Which one gives the BPM? Watch the <b>units</b>! 👀</p>
+      <p><b>B3.</b> Which one gives the BPM? Watch the <b>units</b>! 👀 <span class="tries">Tries left: <b id="tries">2</b></span></p>
       <div class="choices">
         <button class="choice" data-c="A"><b>A</b> 52 beats × 21 sec ÷ 60 <span class="u">sec/min</span></button>
         <button class="choice" data-c="B"><b>B</b> 52 beats ÷ 60 sec × 21 sec</button>
@@ -273,10 +277,18 @@ const CFB={
   B:['❌ 52 ÷ 60 × 21 ≈ 18.2 — you divided by 60 seconds, but the song was only 21 seconds long. Units are mixed up!',false],
   C:['✅ YES! 52 beats ÷ 21 sec = 2.48 beats per second. × 60 sec/min = ≈ 148.6 beats per minute. Seconds cancel → beats/min = BPM! 🎉',true],
   D:['❌ 21 ÷ 52 × 60 ≈ 24.2 … that’s upside down — seconds per beat, not beats per minute!',false]};
+let triesLeft=2;
 document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+  if(triesLeft<=0||b.disabled) return;
   document.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
-  choice=b.dataset.c; fb('fb3',CFB[choice][1],CFB[choice][0]);
+  choice=b.dataset.c; triesLeft--; b.disabled=true; b.classList.add('used');
+  const [m,ok]=CFB[choice];
+  if(ok){ triesLeft=0; lockChoices(); fb('fb3',true,m); }
+  else if(triesLeft>0) fb('fb3',false,m+'  👉 1 try left!');
+  else { lockChoices(); fb('fb3',false,m+'  — Out of tries. The answer was C.'); }
+  document.getElementById('tries').textContent=triesLeft;
 });
+function lockChoices(){document.querySelectorAll('.choice').forEach(x=>x.disabled=true);}
 // ---- submit ----
 function val(id){return parseFloat(document.getElementById(id).value);}
 const SHEET_URL='https://script.google.com/macros/s/AKfycbzqaNdWrqVVH6-vEhaiPzNtXIxRoTtikJdJcCwClR1R8k67tOk_h-PdECRi6XFXofIpbw/exec';
