@@ -55,6 +55,32 @@
   .hint{background:#0003;border-left:4px solid var(--cyan);padding:10px 14px;border-radius:8px;color:var(--muted);font-size:16px;margin-top:10px}
   .credit{color:#ffffff55;font-size:13px;text-align:center;margin-top:30px}
   kbd{background:#ffffff22;border-radius:6px;padding:1px 7px}
+  .explain{font-size:clamp(20px,3.6vw,26px);line-height:1.45}
+  .eqrow{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:14px 0;background:#0003;border-radius:16px;padding:14px 18px}
+  .emoji{font-size:44px}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;font-size:clamp(24px,4.5vw,32px);vertical-align:middle}
+  .frac .top{border-bottom:4px solid currentColor;padding:0 10px}
+  .frac .bot{padding:0 10px}
+  .eq{font-size:clamp(26px,5vw,36px);font-weight:700}
+  .c-or{color:var(--orange)} .c-cy{color:var(--cyan)} .c-pk{color:var(--pink)} .c-li{color:var(--lime)}
+  .per{background:var(--pink);color:#fff;border-radius:10px;padding:2px 10px;font-weight:700}
+  .bonus{border:3px dashed var(--orange)}
+  .bonus h2{color:var(--orange)}
+  .choices{display:grid;gap:10px;margin-top:8px}
+  .choice{background:#0003;color:var(--ink);text-align:left;font-size:19px;border:2px solid #ffffff22;padding:12px 16px}
+  .choice.sel{border-color:var(--cyan);background:#33e1ff22}
+  .choice b{color:var(--orange);margin-right:8px}
+  .u{color:var(--muted);font-size:.85em}
+  .submit{background:linear-gradient(90deg,var(--pink),var(--orange));color:#fff;font-size:24px;padding:16px 34px}
+  .next{background:var(--cyan);font-size:22px;padding:14px 30px;text-decoration:none;color:#14112b;border-radius:14px;font-weight:700;display:inline-block}
+  .result{text-align:center;display:none}
+  .result.show{display:block}
+  .bigstar{font-size:clamp(90px,22vw,150px);line-height:1;animation:spin 1s ease-out}
+  @keyframes spin{from{transform:scale(0) rotate(-180deg)}to{transform:scale(1) rotate(0)}}
+  .score{font-size:clamp(40px,9vw,64px);font-weight:700;color:var(--lime);margin:6px 0}
+  .stars{font-size:40px;letter-spacing:6px}
+  .bonusline{font-size:24px;font-weight:700;margin:8px 0}
+  .nameinp{width:240px}
 </style>
 </head>
 <body>
@@ -91,6 +117,21 @@
     <div class="yourtaps">Your taps: <b id="taps">0</b> &nbsp;·&nbsp; your taps at 10 sec: <b id="taps10">–</b></div>
   </div>
 
+  <div class="card explain">
+    <h2 style="font-size:28px">🤔 What does BPM mean?</h2>
+    <p style="margin:0 0 6px">You already know <b>MPH</b> from driving! The word <span class="per">PER</span> means <b>÷ divide</b>.</p>
+    <div class="eqrow"><span class="emoji">🚗</span>
+      <span class="eq c-or">MPH</span><span class="eq">=</span>
+      <span class="frac c-or"><span class="top">miles</span><span class="bot">hours</span></span>
+      <span>60 MPH = 60 miles in <b>1 hour</b></span></div>
+    <div class="eqrow"><span class="emoji">🥁</span>
+      <span class="eq c-cy">BPM</span><span class="eq">=</span>
+      <span class="frac c-cy"><span class="top">beats</span><span class="bot">minutes</span></span>
+      <span>148 BPM = 148 beats in <b>1 minute</b></span></div>
+    <p style="margin:6px 0 0"><b class="c-or">M</b>iles <b class="c-pk">P</b>er <b class="c-or">H</b>our &nbsp;→&nbsp; <b class="c-cy">B</b>eats <b class="c-pk">P</b>er <b class="c-cy">M</b>inute. Same idea! 🎉</p>
+    <p style="margin:6px 0 0">⚠️ But we only count for <b>10 seconds</b>, not a whole minute… so we’ll need to scale it up!</p>
+  </div>
+
   <div class="card">
     <h2>Your answers</h2>
     <div class="q">
@@ -99,7 +140,7 @@
       <div class="fb" id="f1"></div>
     </div>
     <div class="q">
-      <p><b>2.</b> BPM means <b>beats per minute</b>. A minute is 60 seconds. How many 10-second chunks fit in a minute?</p>
+      <p><b>2.</b> A minute is <b>60 seconds</b>. How many 10-second chunks fit in one minute?</p>
       <div class="row"><input id="a2" type="number" inputmode="decimal" placeholder="chunks"><button class="check" data-q="2">Check</button></div>
       <div class="fb" id="f2"></div>
     </div>
@@ -109,6 +150,44 @@
       <div class="fb" id="f3"></div>
     </div>
     <div class="hint">💡 Write down your BPM — you’ll need it in Step 2!</div>
+  </div>
+
+  <div class="card bonus">
+    <h2>⭐ BONUS: Get a more accurate BPM</h2>
+    <p style="font-size:18px;margin:0 0 6px">Did you wait until the very end? Counting the <b>whole</b> track gives a better answer than just 10 seconds!</p>
+    <div class="q">
+      <p><b>B1.</b> What number did the counter show at the <b>end</b>?</p>
+      <div class="row"><input id="b1" type="number" inputmode="decimal" placeholder="beats"> <span class="u">beats</span></div>
+    </div>
+    <div class="q">
+      <p><b>B2.</b> How many <b>seconds</b> long was the track? <span class="u">(look at the timer)</span></p>
+      <div class="row"><input id="b2" type="number" inputmode="decimal" placeholder="sec"> <span class="u">seconds</span></div>
+    </div>
+    <div class="q">
+      <p><b>B3.</b> Which one gives the BPM? Watch the <b>units</b>! 👀</p>
+      <div class="choices">
+        <button class="choice" data-c="A"><b>A</b> 52 beats × 21 sec ÷ 60 <span class="u">sec/min</span></button>
+        <button class="choice" data-c="B"><b>B</b> 52 beats ÷ 60 sec × 21 sec</button>
+        <button class="choice" data-c="C"><b>C</b> 52 beats ÷ 21 sec × 60 <span class="u">sec/min</span></button>
+        <button class="choice" data-c="D"><b>D</b> 21 sec ÷ 52 beats × 60 <span class="u">sec/min</span></button>
+      </div>
+      <div class="fb" id="fb3"></div>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <h2>Done? Submit Step 1</h2>
+    <div class="row" style="justify-content:center;margin-bottom:14px"><input class="nameinp" id="sname" placeholder="Your name"></div>
+    <button class="submit" id="submit">✅ SUBMIT STEP 1</button>
+    <div class="result" id="result">
+      <div class="bigstar">⭐</div>
+      <div class="score" id="score"></div>
+      <div class="stars" id="stars"></div>
+      <div class="bonusline" id="bonusline"></div>
+      <p style="color:var(--muted)" id="who"></p>
+      <p style="color:var(--muted)">📸 Take a screenshot of this and upload it to Canvas!</p>
+      <a class="next" href="step2.html">NEXT: Step 2 →</a>
+    </div>
   </div>
 
   <p class="credit">Music: Fatboy Slim – “Satisfaction Skank” (drums only, short clip for classroom use) · Lab by Ms. K</p>
@@ -178,6 +257,32 @@ document.querySelectorAll('.check').forEach(b=>b.onclick=()=>{
     else fb('f3',false,'❌ Try: (beats in 10 seconds) × 6.');
   }
 });
+// ---- bonus formula choices ----
+let choice=null;
+const CFB={
+  A:['❌ 52 × 21 ÷ 60 ≈ 18.2 … in “beat·minutes”?? That’s not a thing! Seconds didn’t cancel.',false],
+  B:['❌ 52 ÷ 60 × 21 ≈ 18.2 — you divided by 60 seconds, but the song was only 21 seconds long. Units are mixed up!',false],
+  C:['✅ YES! 52 beats ÷ 21 sec = 2.48 beats per second. × 60 sec/min = ≈ 148.6 beats per minute. Seconds cancel → beats/min = BPM! 🎉',true],
+  D:['❌ 21 ÷ 52 × 60 ≈ 24.2 … that’s upside down — seconds per beat, not beats per minute!',false]};
+document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+  choice=b.dataset.c; fb('fb3',CFB[choice][1],CFB[choice][0]);
+});
+// ---- submit ----
+function val(id){return parseFloat(document.getElementById(id).value);}
+document.getElementById('submit').onclick=()=>{
+  const a1=val('a1'),a2=val('a2'),a3=val('a3');
+  let s=0; if(a1>=24&&a1<=25)s++; if(a2===6)s++; if(a3>=144&&a3<=150)s++;
+  const b1=val('b1'),b2=val('b2');
+  const bonus=(b1>=51&&b1<=53)&&(b2>=20.5&&b2<=21.5)&&choice==='C';
+  const r=document.getElementById('result'); r.classList.remove('show'); void r.offsetWidth; r.classList.add('show');
+  document.getElementById('score').textContent=s+' / 3 points';
+  document.getElementById('stars').textContent='⭐'.repeat(s)+'☆'.repeat(3-s);
+  document.getElementById('bonusline').innerHTML=bonus?'<span class="c-or">🌟 BONUS COMPLETE! 🌟</span>':'<span style="color:var(--muted)">Bonus: not completed</span>';
+  const n=document.getElementById('sname').value.trim();
+  document.getElementById('who').textContent=(n?n+' · ':'')+new Date().toLocaleString();
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+};
 </script>
 </body>
 </html>
