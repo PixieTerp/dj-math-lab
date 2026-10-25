@@ -177,15 +177,16 @@
 
   <div class="card" style="text-align:center">
     <h2>Done? Submit Step 1</h2>
-    <div class="row" style="justify-content:center;margin-bottom:14px"><input class="nameinp" id="sname" placeholder="Your name"></div>
+    <div class="row" style="justify-content:center;margin-bottom:14px"><input class="nameinp" id="sname" placeholder="First & last name"></div>
     <button class="submit" id="submit">✅ SUBMIT STEP 1</button>
+    <div class="fb" id="savemsg" style="font-size:20px"></div>
     <div class="result" id="result">
       <div class="bigstar">⭐</div>
       <div class="score" id="score"></div>
       <div class="stars" id="stars"></div>
       <div class="bonusline" id="bonusline"></div>
       <p style="color:var(--muted)" id="who"></p>
-      <p style="color:var(--muted)">📸 Take a screenshot of this and upload it to Canvas!</p>
+      <p class="bonusline" style="font-size:20px" id="saved2"></p>
       <a class="next" href="step2.html">NEXT: Step 2 →</a>
     </div>
   </div>
@@ -270,7 +271,16 @@ document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
 });
 // ---- submit ----
 function val(id){return parseFloat(document.getElementById(id).value);}
-document.getElementById('submit').onclick=()=>{
+const SHEET_URL='https://script.google.com/macros/s/AKfycbzqaNdWrqVVH6-vEhaiPzNtXIxRoTtikJdJcCwClR1R8k67tOk_h-PdECRi6XFXofIpbw/exec';
+async function saveRow(data){
+  const body=JSON.stringify(data);
+  try{ const r=await fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body}); return r.ok; }
+  catch(e){ try{ await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body}); return true; }catch(e2){ return false; } }
+}
+const subBtn=document.getElementById('submit'), saveMsg=document.getElementById('savemsg');
+subBtn.onclick=async()=>{
+  const nm=document.getElementById('sname').value.trim();
+  if(nm.length<2){ fb('savemsg',false,'✏️ Type your first AND last name first!'); document.getElementById('sname').focus(); return; }
   const a1=val('a1'),a2=val('a2'),a3=val('a3');
   let s=0; if(a1>=24&&a1<=25)s++; if(a2===6)s++; if(a3>=144&&a3<=150)s++;
   const b1=val('b1'),b2=val('b2');
@@ -282,6 +292,13 @@ document.getElementById('submit').onclick=()=>{
   const n=document.getElementById('sname').value.trim();
   document.getElementById('who').textContent=(n?n+' · ':'')+new Date().toLocaleString();
   r.scrollIntoView({behavior:'smooth',block:'center'});
+  subBtn.disabled=true; subBtn.textContent='⏳ Saving…'; saveMsg.className='fb'; saveMsg.textContent='';
+  const ok=await saveRow({step:'Step 1',name:nm,score:s,bonus:bonus,
+    a1:document.getElementById('a1').value,a2:document.getElementById('a2').value,a3:document.getElementById('a3').value,
+    b1:document.getElementById('b1').value,b2:document.getElementById('b2').value,choice:choice||''});
+  subBtn.disabled=false; subBtn.textContent='✅ SUBMIT STEP 1';
+  if(ok){ fb('savemsg',true,'💾 Saved! Ms. K got your score ✓'); document.getElementById('saved2').textContent='💾 Saved to Ms. K ✓'; }
+  else { fb('savemsg',false,'⚠️ Couldn’t save — check your internet and press SUBMIT again, or tell Ms. K.'); document.getElementById('saved2').textContent='⚠️ Not saved yet'; }
 };
 </script>
 </body>
